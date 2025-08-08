@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Quotes</title>
+    <style>
+        #quote {
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        Quote:
+        <textarea name="quote" id="quote"></textarea><br>
+        by: <input type="text"  id="quoteAuthor" placeholder="Author">
+        When: <input type="text" id="quoteDate" placeholder="Date"> 
+        Added By: <input type="text" id="username" placeholder="Your Name">
+        <input type="button" id="saveQuote" value="Save Quote">
+    </div>
+    
+</body>
+
+<script>
+    saveQuote = document.getElementById("saveQuote");
+    saveQuote.addEventListener("click", function(){
+        console.log("Add");
+
+        let data = {};
+        data["username"] = username.value;
+        data["quote"] = quote.innerText; 
+        data["quoteAuthor"] = quoteAuthor.value;
+        data['quoteDate'] = quoteDate.value;
+
+        console.log("add data:", data);
+        sendRequest("/", "addQuote", data);
+    })
+
+
+    function sendRequest(target, action, value="") {
+        console.log("making request")
+        let xR = new XMLHttpRequest();
+        xR.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                console.log("Server Response:", this.responseText);
+                data = JSON.parse(this.responseText);
+                console.log("data:", data);
+                console.log("data['item']:", data["item"]);
+                
+                //Handle responses
+                if (data["item"] == "time") {
+                    console.log("Got the time: ", data["status"]);
+                    timeSlot.innerText = data["status"];
+                }
+                if (data["item"] == "photoResistor") {
+                    console.log("Light Level: ", data["status"]);
+                    MkspPhotoResistor.innerText = data["status"];
+                }
+                if (data["item"] == "getDeviceTable") {
+                    // deviceTable.innerHTML = data['status'];
+                    insertDeviceTable(data['status'])
+                }
+            }
+        }
+        let data = {};
+        data["action"] = action;
+        data["value"] = value;
+        console.log("data:", data);
+        xR.open("POST", target, true);
+        xR.send(JSON.stringify(data));
+    }
+</script>
+</html>
