@@ -34,7 +34,6 @@ async def handlePost(request):
         rData['status'] = now.ctime() # a string representing the current time
 
     if data['action'] == 'addQuote':
-        # register device with the base station
         info = data['value']
         print("Adding: ", info)
         db.insert(
@@ -45,6 +44,15 @@ async def handlePost(request):
         )
         rData['item'] = 'addQuote'
         rData['status'] = 'added'
+
+    if data['action'] == 'getRandomQuote':
+        info = data['value']
+        print("Getting: ", info)
+
+        rData['item'] = 'quote'
+        rData['status'] = db.getRandom()
+
+    
 
     response = json.dumps(rData)
     print("Response: ", response)

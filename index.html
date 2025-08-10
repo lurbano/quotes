@@ -6,7 +6,48 @@
     <title>TFS Quotes</title>
 </head>
 <body>
-    Quote for today:<p></p>
+    Quote for today:
+    <div id="quoteArea">
+        <div id="quote">The turtle moves</div>
+        <div id="quoteAuthor">Terry Pratchett</div>
+        <div id="quoteDate">1992</div>
+    </div>
+
+    <input id="getRandomQuote" type="button" value="Get Random Quote">
     
 </body>
+
+<script>
+    getRandomQuote.addEventListener("click", function(){
+        sendRequest("/", "getRandomQuote");
+    })
+
+    function sendRequest(target, action, value="") {
+        console.log("making request")
+        let xR = new XMLHttpRequest();
+        xR.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                console.log("Server Response:", this.responseText);
+                data = JSON.parse(this.responseText);
+                console.log("data:", data);
+                console.log("data['item']:", data["item"]);
+                
+                //Handle responses
+                
+                if (data["item"] == "quote") {
+                    quote.innerHTML = data["status"]["quote"];
+                    quoteAuthor.innerHTML = data["status"]["quoteAuthor"];
+                    quoteDate.innerHTML = data["status"]["quoteDate"];
+                }
+            }
+        }
+        let data = {};
+        data["action"] = action;
+        data["value"] = value;
+        console.log("data:", data);
+        xR.open("POST", target, true);
+        xR.send(JSON.stringify(data));
+    }
+</script>
 </html>

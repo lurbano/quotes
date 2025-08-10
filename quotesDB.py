@@ -3,6 +3,7 @@ from tinydb import TinyDB, Query
 from datetime import datetime
 import os
 import subprocess
+import random
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 print('path:', dir_path)
@@ -25,6 +26,12 @@ class quotesDB:
             'lastUpdateTime':getTimeString()
             })
         return id
+
+    def getRandom(self):
+        allQuotes = self.activeDB.all()
+        rand_i = random.randint(0, len(allQuotes)-1)
+        return allQuotes[rand_i]
+
     
     def update(self, 
                id = "",
