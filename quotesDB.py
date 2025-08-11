@@ -17,20 +17,36 @@ class quotesDB:
                username="", 
                quote="",
                quoteAuthor="",
-               quoteDate=""):
+               quoteDate="",
+               quoteSource=""):
         id = self.activeDB.insert({
             'username': username, 
             'quote': quote, 
             "quoteAuthor": quoteAuthor, 
             "quoteDate": quoteDate,
-            'lastUpdateTime':getTimeString()
+            "quoteSource": quoteSource,
+            'lastUpdateTime':getTimeString(),
+            'read':[]
             })
         return id
 
     def getRandom(self):
         allQuotes = self.activeDB.all()
-        rand_i = random.randint(0, len(allQuotes)-1)
-        return allQuotes[rand_i]
+        all_doc_ids = [doc.doc_id for doc in self.activeDB.all()]
+        print(all_doc_ids)
+        print()
+        random_document = ""
+        if all_doc_ids:
+            # Randomly select one ID
+            random_doc_id = random.choice(all_doc_ids)
+            print(f"Randomly selected document ID: {random_doc_id}")
+
+            random_document = self.activeDB.get(doc_id=random_doc_id)
+            random_document["id"] = random_doc_id
+        #rand_i = random.randint(0, len(allQuotes)-1)
+        #return allQuotes[rand_i]
+    
+        return random_document
 
     
     def update(self, 

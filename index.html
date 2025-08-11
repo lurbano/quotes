@@ -7,19 +7,28 @@
 </head>
 <body>
     Quote for today:
+    <input id="getRandomQuote" type="button" value="Get Random Quote">
+   
     <div id="quoteArea">
         <div id="quote">The turtle moves</div>
         <div id="quoteAuthor">Terry Pratchett</div>
         <div id="quoteDate">1992</div>
     </div>
 
-    <input id="getRandomQuote" type="button" value="Get Random Quote">
-    
+    <input id="markAsRead" type="button" value="Mark as Read">
+     
+    <div id="status"></div>
 </body>
 
 <script>
+
+    var quote_id = "";
     getRandomQuote.addEventListener("click", function(){
         sendRequest("/", "getRandomQuote");
+    })
+
+    markAsRead.addEventListener("click", function(){
+        sendRequest("/", "markAsRead", value=quote_id);
     })
 
     function sendRequest(target, action, value="") {
@@ -39,6 +48,7 @@
                     quote.innerHTML = data["status"]["quote"];
                     quoteAuthor.innerHTML = data["status"]["quoteAuthor"];
                     quoteDate.innerHTML = data["status"]["quoteDate"];
+                    quote_id = data["status"]["id"];
                 }
             }
         }

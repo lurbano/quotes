@@ -21,6 +21,12 @@ async def handleAdd(request):
         html_content = f.read()
     return web.Response(text=html_content, content_type='text/html')
 
+async def handleEdit(request):
+    with open(dir_path+"/"+"edit.html", "r") as f:
+        html_content = f.read()
+    return web.Response(text=html_content, content_type='text/html')
+
+
 async def handlePost(request):
     data = await request.json()
     rData = {}
@@ -36,14 +42,15 @@ async def handlePost(request):
     if data['action'] == 'addQuote':
         info = data['value']
         print("Adding: ", info)
-        db.insert(
+        q_id = db.insert(
             username=info['username'], 
             quote=info['quote'], 
             quoteAuthor=info['quoteAuthor'],
-            quoteDate=info['quoteDate'] 
+            quoteDate=info['quoteDate'],
+            quoteSource=info['quoteSource'] 
         )
         rData['item'] = 'addQuote'
-        rData['status'] = 'added'
+        rData['status'] = f"added {info['quoteAuthor']} ({q_id})"
 
     if data['action'] == 'getRandomQuote':
         info = data['value']
@@ -51,6 +58,14 @@ async def handlePost(request):
 
         rData['item'] = 'quote'
         rData['status'] = db.getRandom()
+    
+    if data['action'] == 'markAsRead':
+        id = data['value']
+        print("Getting id: ", id)
+
+        rData['item'] = 'markAsRead'
+        rData['status'] = 'marked'
+    
 
     
 
@@ -62,6 +77,7 @@ async def main():
     app = web.Application()
     app.router.add_get('/', handle)
     app.router.add_get('/add', handleAdd)
+    app.router.add_get('/edit', handleEdit)
     app.router.add_post("/", handlePost)
 
     # Serve static files from the "static" directory
