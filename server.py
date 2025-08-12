@@ -65,6 +65,18 @@ async def handlePost(request):
 
         rData['item'] = 'markAsRead'
         rData['status'] = 'marked'
+
+    if data['action'] == 'getQuotes':
+        # info = data['value']
+        print("Getting: ", data['value'])
+
+        quotes = db.getQuotes(data['value']["key"], data['value']["val"])
+
+        if (data['value']["toEdit"]):
+            rData['item'] = 'quotesToEdit'
+        else:
+            rData['item'] = "quotes"
+        rData['status'] = quotes
     
 
     

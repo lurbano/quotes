@@ -26,7 +26,9 @@
     </div>
     <div id="response"></div>
 
+    <input type="button" id="getAllQuotes" value="Get All Quotes">
     <div id="quoteTable"></div>
+
     
 </body>
 
@@ -45,6 +47,20 @@
         console.log("add data:", data);
         sendRequest("/", "addQuote", data);
     })
+
+    getAllQuotes.addEventListener("click", function(){
+        getQuotes(key="", val="", toEdit=true);
+    })
+
+    function getQuotes(key="", val = "", toEdit=false){
+
+        key = (key === "") ? "all" : key;
+
+        let data = {"key": key, "val": val, "toEdit": toEdit};
+
+        sendRequest("/", "getQuotes", data);
+
+    }
 
 
     function sendRequest(target, action, value="") {
@@ -70,6 +86,14 @@
                 if (data["item"] == "addQuote") {
                     // deviceTable.innerHTML = data['status'];
                     response.innerHTML = data['status'];
+                }
+                if (data["item"] == "quotesToEdit") {
+                    // deviceTable.innerHTML = data['status'];
+                    console.log("Quotes");
+                    for (let quote of data['status']){
+                        console.log(quote);
+                    }
+                    console.log("Done Quotes");
                 }
             }
         }

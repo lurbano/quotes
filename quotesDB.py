@@ -48,6 +48,19 @@ class quotesDB:
     
         return random_document
 
+    def getQuotes(self, key, value):
+
+        print ("__getQuotes:", key, " : ", value)
+        sQuotes = []
+        if (key == 'all'):
+            quotes = self.activeDB.all()
+            for doc in quotes:
+                sQuotes.append(doc)
+                sQuotes[-1]["id"] = doc.doc_id
+            
+        return sQuotes
+                
+
     
     def update(self, 
                id = "",
