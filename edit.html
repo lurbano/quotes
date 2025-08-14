@@ -9,7 +9,37 @@
             width: 80%;
         }
         #quoteTable {
+            /* display: grid;
+            grid-template-columns: 3em 1fr; */
+            border: 1px solid black;
+        }
+        .quoteRowClass {
             display: grid;
+            grid-template-columns: 3em 1fr;
+            border: 1px solid black;
+        }
+        .quoteInfo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid red;
+        }
+        .quoteClass {
+            border: 1px solid green;
+            background-color: lightpink;
+            grid-row: 1;
+            grid-column: 1 / -1;
+        }
+        .quoteAuthorClass {
+            border: 1px solid green;
+            background-color: lightpink;
+            grid-row: 2;
+            grid-column: 1 ;
+        }
+        .quoteDateClass {
+            border: 1px solid green;
+            background-color: lightblue;
+            grid-row: 2;
+            grid-column: 2;
         }
     </style>
 </head>
@@ -62,7 +92,42 @@
 
     }
 
+    function makeQuoteRow(quote, targetDivID="quoteTable"){
+        let targetDiv = document.getElementById(targetDivID);
 
+        let quoteRow = newDiv();
+        quoteRow.classList.add("quoteRowClass");
+
+            idElem = document.createElement("div");
+            idElem.innerHTML = quote.id;
+
+            infoElem = document.createElement("div");
+            infoElem.classList.add("quoteInfo");
+                quoteElem = document.createElement("div");
+                quoteElem.classList.add("quoteClass");
+                quoteElem.innerHTML = quote.quote;
+              
+                quoteAuthorElem = newDiv();
+                quoteAuthorElem.classList.add("quoteAuthorClass");
+                quoteAuthorElem.innerText = quote.quoteAuthor;
+
+                quoteDateElem = newDiv();
+                quoteDateElem.classList.add("quoteDateClass");
+                quoteDateElem.innerText = quote.quoteDate;
+
+            infoElem.appendChild(quoteElem);
+            infoElem.appendChild(quoteAuthorElem);
+            infoElem.appendChild(quoteDateElem)
+            
+        quoteRow.appendChild(idElem);
+        quoteRow.appendChild(infoElem);
+
+        targetDiv.appendChild(quoteRow);
+    }
+
+    function newDiv(){
+        return document.createElement("div");
+    }
     function sendRequest(target, action, value="") {
         console.log("making request")
         let xR = new XMLHttpRequest();
@@ -92,6 +157,7 @@
                     console.log("Quotes");
                     for (let quote of data['status']){
                         console.log(quote);
+                        makeQuoteRow(quote);
                     }
                     console.log("Done Quotes");
                 }
