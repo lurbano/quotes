@@ -52,6 +52,20 @@ async def handlePost(request):
         rData['item'] = 'addQuote'
         rData['status'] = f"added {info['quoteAuthor']} ({q_id})"
 
+    if data['action'] == 'updateQuote':
+        info = data['value']
+        print("Updating: ", info)
+        q_id = db.update(info)
+        # q_id = db.insert(
+        #     username=info['username'], 
+        #     quote=info['quote'], 
+        #     quoteAuthor=info['quoteAuthor'],
+        #     quoteDate=info['quoteDate'],
+        #     quoteSource=info['quoteSource'] 
+        # )
+        rData['item'] = 'updateQuote'
+        rData['status'] = "" #f"added {info['quoteAuthor']} ({q_id})"
+
     if data['action'] == 'getRandomQuote':
         info = data['value']
         print("Getting: ", info)

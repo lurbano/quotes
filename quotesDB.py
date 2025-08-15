@@ -62,23 +62,17 @@ class quotesDB:
                 
 
     
-    def update(self, 
-               id = "",
-               username="", 
-               quote="",
-               author="",
-               date=""):
-        
+    def update(self, data):
         
         Line = Query()
-        id = self.activeDB.upsert({
-            'username': username, 
-            'item': item, 
-            "tier": tier, 
-            "itemDescription": itemDescription,
-            'lastUpdateTime':getTimeString()
+        id = self.activeDB.update({
+            'username': data['username'], 
+            'author': data['author'],
+            'date':data['date'],
+            'quote':data['quote'],
+            'source':data['source']
             }, 
-            (Line.username == username) & (Line.item == item))
+            doc_ids=[data['id']])
         
         return id
     
