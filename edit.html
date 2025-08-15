@@ -23,7 +23,7 @@
             grid-template-columns: repeat(4, 1fr);
             border: 1px solid red;
         }
-        .quoteClass {
+        .quoteQuoteClass {
             border: 1px solid green;
             background-color: lightpink;
             grid-row: 1;
@@ -40,6 +40,22 @@
             background-color: lightblue;
             grid-row: 2;
             grid-column: 2;
+        }
+        .quoteSourceClass {
+            border: 1px solid green;
+            background-color: lightblue;
+            grid-row: 2;
+            grid-column: 3;
+        }
+        .quoteUsernameClass {
+            border: 1px solid green;
+            background-color: lightblue;
+            grid-row: 2;
+            grid-column: 4;
+        }
+        .updateButtonClass {
+            grid-row: 3;
+            grid-column: 1;
         }
     </style>
 </head>
@@ -92,6 +108,38 @@
 
     }
 
+    function newTextInput(id, className){
+        elem = document.createElement("input");
+        elem.type = "text";
+        elem.classList.add(className);
+        elem.id = id;
+        return elem;
+    }
+
+    function quoteInput(qType, id, value){
+        let base = `quote${qType}`;
+        elem = document.createElement("input");
+        elem.type = "text";
+        elem.classList.add(`${base}Class`);
+        elem.id = `${base}_id`;
+        elem.value = value;
+        return elem;
+    }
+
+    function updateQuote(id){
+
+        data = {
+            id: id,
+            username: `quoteUsername_${id}`,
+            author: `quoteAuthor_${id}`,
+            date: `quoteDate_${id}`,
+            quote: `quoteQuote_${id}`,
+            source: `quoteSource_${id}`
+        }
+
+        sendRequest("/", "updateQuote", data);
+    }
+
     function makeQuoteRow(quote, targetDivID="quoteTable"){
         let targetDiv = document.getElementById(targetDivID);
 
@@ -103,22 +151,19 @@
 
             infoElem = document.createElement("div");
             infoElem.classList.add("quoteInfo");
-                quoteElem = document.createElement("div");
-                quoteElem.classList.add("quoteClass");
-                quoteElem.innerHTML = quote.quote;
-              
-                quoteAuthorElem = newDiv();
-                quoteAuthorElem.classList.add("quoteAuthorClass");
-                quoteAuthorElem.innerText = quote.quoteAuthor;
 
-                quoteDateElem = newDiv();
-                quoteDateElem.classList.add("quoteDateClass");
-                quoteDateElem.innerText = quote.quoteDate;
+            infoElem.appendChild( quoteInput("Quote", quote.id, quote.quote) );
+            infoElem.appendChild( quoteInput("Author", quote.id, quote.quoteAuthor) );
+            infoElem.appendChild( quoteInput("Date", quote.id, quote.quoteDate) );
+            infoElem.appendChild( quoteInput("Source", quote.id, quote.quoteSource) );
+            infoElem.appendChild( quoteInput("Username", quote.id, quote.username) );
 
-            infoElem.appendChild(quoteElem);
-            infoElem.appendChild(quoteAuthorElem);
-            infoElem.appendChild(quoteDateElem)
-            
+            updateButton = document.createElement("input");
+            updateButton.type = "button";
+            updateButton.classList.add("updateButtonClass");
+            updateButton.value = `Update ${quote.id}`;
+            infoElem.appendChild(updateButton);
+
         quoteRow.appendChild(idElem);
         quoteRow.appendChild(infoElem);
 
