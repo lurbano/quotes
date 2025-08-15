@@ -204,6 +204,7 @@
                 if (data["item"] == "quotesToEdit") {
                     // deviceTable.innerHTML = data['status'];
                     console.log("Quotes");
+                    quoteTable.innerHTML = "";
                     for (let quote of data['status']){
                         console.log(quote);
                         makeQuoteRow(quote);
