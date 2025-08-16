@@ -3,32 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TFS Quotes</title>
+    <title>Edit Quotes</title>
+    <style>
+        #mainQuoteArea{
+            background-color: tan;
+            border: 5px inset lightsalmon;
+            padding: 5px;
+            margin: 5px;
+            display: grid;
+            grid-template-columns: 6em auto;
+        }
+        #addQuoteArea{
+            background-color: tan;
+            border: 5px inset lightsalmon;
+            padding: 5px;
+            margin: 5px;
+        }
+        #editQuotesArea{
+            background-color: lightseagreen;
+            border: 5px inset lightsalmon;
+            padding: 5px;
+            margin: 5px;
+        }
+        #quote {
+            width: 80%;
+        }
+        #quoteTable {
+            /* display: grid;
+            grid-template-columns: 3em 1fr; */
+            border: 1px solid black;
+        }
+        .quoteRowClass {
+            display: grid;
+            grid-template-columns: 3em 1fr;
+            border: 1px solid black;
+            margin-bottom: 10px;
+        }
+        .quoteInfo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid red;
+        }
+        .quoteQuoteClass {
+            border: 1px solid green;
+            background-color: lightpink;
+            grid-row: 1;
+            grid-column: 1 / -1;
+        }
+        .quoteAuthorClass {
+            border: 1px solid green;
+            background-color: lightpink;
+            grid-row: 2;
+            grid-column: 1 ;
+        }
+        .quoteDateClass {
+            border: 1px solid green;
+            background-color: lightblue;
+            grid-row: 2;
+            grid-column: 2;
+        }
+        .quoteSourceClass {
+            border: 1px solid green;
+            background-color: lightblue;
+            grid-row: 2;
+            grid-column: 3;
+        }
+        .quoteUsernameClass {
+            border: 1px solid green;
+            background-color: lightblue;
+            grid-row: 2;
+            grid-column: 4;
+        }
+        .updateButtonClass {
+            grid-row: 3;
+            grid-column: 1;
+        }
+    </style>
 </head>
 <body>
-    Quote for today:
-    <input id="getRandomQuote" type="button" value="Get Random Quote">
-   
-    <div id="quoteArea">
-        <div id="quote">The turtle moves</div>
-        <div id="quoteAuthor">Terry Pratchett</div>
-        <div id="quoteDate">1992</div>
+
+    <div id="mainQuoteArea">
+        <div>Quotes:</div>
+        <input id="getRandomQuote" type="button" value="Get Random Quote">
+        Quote: <div id="mainQuote"></div>
+        by: <div id="mainAuthor"></div>
+        Date: <div id="mainDate"></div>
+        Source: <div id="mainSource"></div>
+        Added by: <div id="mainUsername"></div>
     </div>
 
-    <input id="markAsRead" type="button" value="Mark as Read">
-     
-    <div id="status"></div>
+    <div id="addQuoteArea">
+        <b>Add Quote</b><br>
+        Quote: 
+        <textarea name="quote" id="quote"></textarea><br>
+        by: <input type="text"  id="quoteAuthor" placeholder="Author">
+        When: <input type="text" id="quoteDate" placeholder="Date"> 
+        Added By: <input type="text" id="username" placeholder="Your Name">
+        Source: <input type="text" id="quoteSource" placeholder="Source">
+        <input type="button" id="saveQuote" value="Save Quote">
+    </div>
+    <div id="response"></div>
+
+    <div id="editQuotesArea">
+        <input type="button" id="getAllQuotes" value="Show All Quotes">
+        <div id="quoteTable"></div>
+    </div>
+    
+
+    
 </body>
 
 <script>
+    saveQuote = document.getElementById("saveQuote");
+    saveQuote.addEventListener("click", function(){
+        console.log("Add");
 
-    var quote_id = "";
-    getRandomQuote.addEventListener("click", function(){
-        sendRequest("/", "getRandomQuote");
+        let data = {};
+        data["username"] = username.value;
+        data["quote"] = quote.value; 
+        data["quoteAuthor"] = quoteAuthor.value;
+        data['quoteDate'] = quoteDate.value;
+        data['quoteSource'] = quoteSource.value;
+
+        console.log("add data:", data);
+        sendRequest("/", "addQuote", data);
     })
 
-    markAsRead.addEventListener("click", function(){
-        sendRequest("/", "markAsRead", value=quote_id);
+    getAllQuotes.addEventListener("click", function(){
+        getQuotes(key="", val="", toEdit=true);
+    })
+
+    function getQuotes(key="", val = "", toEdit=false){
+
+        key = (key === "") ? "all" : key;
+
+        let data = {"key": key, "val": val, "toEdit": toEdit};
+
+        sendRequest("/", "getQuotes", data);
+
+    }
+
+    function newTextInput(id, className){
+        elem = document.createElement("input");
+        elem.type = "text";
+        elem.classList.add(className);
+        elem.id = id;
+        return elem;
+    }
+
+    function quoteInput(qType, id, value){
+        let base = `quote${qType}`;
+        elem = document.createElement("input");
+        elem.type = "text";
+        elem.classList.add(`${base}Class`);
+        elem.id = `${base}_${id}`;
+        elem.value = value;
+        return elem;
+    }
+
+    function updateQuote(id){
+
+        data = {
+            id: id,
+            username: document.getElementById(`quoteUsername_${id}`).value,
+            author: document.getElementById(`quoteAuthor_${id}`).value,
+            date: document.getElementById(`quoteDate_${id}`).value,
+            quote: document.getElementById(`quoteQuote_${id}`).value,
+            source: document.getElementById(`quoteSource_${id}`).value
+        }
+
+        sendRequest("/", "updateQuote", data);
+    }
+
+    function makeQuoteRow(quote, targetDivID="quoteTable"){
+        let targetDiv = document.getElementById(targetDivID);
+
+        let quoteRow = newDiv();
+        quoteRow.classList.add("quoteRowClass");
+
+            idElem = document.createElement("div");
+            idElem.innerHTML = quote.id;
+
+            infoElem = document.createElement("div");
+            infoElem.classList.add("quoteInfo");
+
+            infoElem.appendChild( quoteInput("Quote", quote.id, quote.quote) );
+            infoElem.appendChild( quoteInput("Author", quote.id, quote.quoteAuthor) );
+            infoElem.appendChild( quoteInput("Date", quote.id, quote.quoteDate) );
+            infoElem.appendChild( quoteInput("Source", quote.id, quote.quoteSource) );
+            infoElem.appendChild( quoteInput("Username", quote.id, quote.username) );
+
+            updateButton = document.createElement("input");
+            updateButton.type = "button";
+            updateButton.classList.add("updateButtonClass");
+            updateButton.value = `Update ${quote.id}`;
+            updateButton.addEventListener("click", function(){
+                updateQuote(quote.id);
+            })
+            infoElem.appendChild(updateButton);
+
+        quoteRow.appendChild(idElem);
+        quoteRow.appendChild(infoElem);
+
+        targetDiv.appendChild(quoteRow);
+    }
+
+    function newDiv(){
+        return document.createElement("div");
+    }
+
+    getRandomQuote.addEventListener("click", function(){
+        sendRequest("/", "getRandomQuote");
     })
 
     function sendRequest(target, action, value="") {
@@ -43,12 +228,35 @@
                 console.log("data['item']:", data["item"]);
                 
                 //Handle responses
-                
+                if (data["item"] == "time") {
+                    console.log("Got the time: ", data["status"]);
+                    timeSlot.innerText = data["status"];
+                }
+                if (data["item"] == "photoResistor") {
+                    console.log("Light Level: ", data["status"]);
+                    MkspPhotoResistor.innerText = data["status"];
+                }
                 if (data["item"] == "quote") {
-                    quote.innerHTML = data["status"]["quote"];
-                    quoteAuthor.innerHTML = data["status"]["quoteAuthor"];
-                    quoteDate.innerHTML = data["status"]["quoteDate"];
+                    mainQuote.innerHTML = data["status"]["quote"];
+                    mainAuthor.innerHTML = data["status"]["quoteAuthor"];
+                    mainDate.innerHTML = data["status"]["quoteDate"];
+                    mainSource.innerHTML = data["status"]["quoteSource"];
+                    mainUsername.innerHTML = data["status"]["username"];
                     quote_id = data["status"]["id"];
+                }
+                if (data["item"] == "addQuote") {
+                    // deviceTable.innerHTML = data['status'];
+                    response.innerHTML = data['status'];
+                }
+                if (data["item"] == "quotesToEdit") {
+                    // deviceTable.innerHTML = data['status'];
+                    console.log("Quotes");
+                    quoteTable.innerHTML = "";
+                    for (let quote of data['status']){
+                        console.log(quote);
+                        makeQuoteRow(quote);
+                    }
+                    console.log("Done Quotes");
                 }
             }
         }

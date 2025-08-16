@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Quotes</title>
     <style>
+        #mainQuoteArea{
+            background-color: tan;
+            border: 5px inset lightsalmon;
+            padding: 5px;
+            margin: 5px;
+            display: grid;
+            grid-template-columns: 6em auto;
+        }
         #addQuoteArea{
             background-color: tan;
             border: 5px inset lightsalmon;
@@ -73,6 +81,16 @@
     </style>
 </head>
 <body>
+
+    <div id="mainQuoteArea">
+        <div>Quotes:</div>
+        <input id="getRandomQuote" type="button" value="Get Random Quote">
+        Quote: <div id="mainQuote"></div>
+        by: <div id="mainAuthor"></div>
+        Date: <div id="mainDate"></div>
+        Source: <div id="mainSource"></div>
+        Added by: <div id="mainUsername"></div>
+    </div>
 
     <div id="addQuoteArea">
         <b>Add Quote</b><br>
@@ -193,6 +211,11 @@
     function newDiv(){
         return document.createElement("div");
     }
+
+    getRandomQuote.addEventListener("click", function(){
+        sendRequest("/", "getRandomQuote");
+    })
+
     function sendRequest(target, action, value="") {
         console.log("making request")
         let xR = new XMLHttpRequest();
@@ -212,6 +235,14 @@
                 if (data["item"] == "photoResistor") {
                     console.log("Light Level: ", data["status"]);
                     MkspPhotoResistor.innerText = data["status"];
+                }
+                if (data["item"] == "quote") {
+                    mainQuote.innerHTML = data["status"]["quote"];
+                    mainAuthor.innerHTML = data["status"]["quoteAuthor"];
+                    mainDate.innerHTML = data["status"]["quoteDate"];
+                    mainSource.innerHTML = data["status"]["quoteSource"];
+                    mainUsername.innerHTML = data["status"]["username"];
+                    quote_id = data["status"]["id"];
                 }
                 if (data["item"] == "addQuote") {
                     // deviceTable.innerHTML = data['status'];
