@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Quotes</title>
     <style>
+        #addQuoteArea{
+            background-color: tan;
+            border: 5px inset lightsalmon;
+            padding: 5px;
+            margin: 5px;
+        }
+        #editQuotesArea{
+            background-color: lightseagreen;
+            border: 5px inset lightsalmon;
+            padding: 5px;
+            margin: 5px;
+        }
         #quote {
             width: 80%;
         }
@@ -62,8 +74,9 @@
 </head>
 <body>
 
-    <div>
-        Quote:
+    <div id="addQuoteArea">
+        <b>Add Quote</b><br>
+        Quote: 
         <textarea name="quote" id="quote"></textarea><br>
         by: <input type="text"  id="quoteAuthor" placeholder="Author">
         When: <input type="text" id="quoteDate" placeholder="Date"> 
@@ -73,8 +86,11 @@
     </div>
     <div id="response"></div>
 
-    <input type="button" id="getAllQuotes" value="Get All Quotes">
-    <div id="quoteTable"></div>
+    <div id="editQuotesArea">
+        <input type="button" id="getAllQuotes" value="Show All Quotes">
+        <div id="quoteTable"></div>
+    </div>
+    
 
     
 </body>
